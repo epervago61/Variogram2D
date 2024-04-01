@@ -660,12 +660,18 @@ def fit_variogram_2D(
     data.Nb = Nb
     data.VarNames = var_names
     results["data"] = data
+
     if return_counts:
         fig, axs = plt.subplots(1,2,figsize=(5,5),subplot_kw=dict(projection='polar'))
         ax = axs[0]
     else:
         fig, ax = plt.subplots(1,1,figsize=(5,5),subplot_kw=dict(projection='polar'))
     fig.set_layout_engine("constrained")
+    dpi = fig.get_dpi()
+    new_size = (width / dpi, height / dpi)
+    fig.set_size_inches(new_size)
+
+
     p1 = ax.contourf(azimuts, bin_center, dir_vario.T, 20, cmap = 'jet')
     ax.set_title("Empiric variogram")
     cbar = fig.colorbar(p1,fraction=0.1, pad=0.04, aspect=10)
@@ -953,8 +959,8 @@ def main():
     model0.anis = 2.0
     model0.var = 2.0
     print(model0)
-    mesh_type = "unstructured"
-    #mesh_type = "structured"
+    #mesh_type = "unstructured"
+    mesh_type = "structured"
     if mesh_type == "structured":
         x = np.array(range(101))
         y = np.array(range(51))
@@ -1020,7 +1026,7 @@ def main():
 
     sample.setDescription(['X','Y','F'])
     units = {'X':'m','Y':'m','F':'val'}
-    sample.exportToCSVFile('test_2d_ustr.csv',',')
+    sample.exportToCSVFile('test_2d_str.csv',',')
     #x, y, vals, results = Trend_Analyses_2D(sample, units, 400,1200,
     #    ntrend=2, removetrend=False, colormap="jet")
     mdist = 30
