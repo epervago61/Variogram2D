@@ -106,38 +106,10 @@ import random
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tabulate import tabulate
 import progress.bar as pb
-from Variogram2D.ScatterD import plot_scatter_with_distrib
+from Bivariate_analyses import get_label
+from Bivariate_analyses import check_mesh_is_structured
+from ScatterD import plot_scatter_with_distrib
 from time import perf_counter
-
-# ================================================================================================
-def get_label(var_name, units, suff=""):
-    label = var_name + suff
-    if var_name in units:
-        label += " [" + units.get(var_name,'') + "]"
-    return label
-# ================================================================================================
-# ================================================================================================
-def check_mesh_is_structured(coord, v):
-    x = np.array(coord[:,0])
-    y = np.array(coord[:,1])
-    v = np.array(v)
-    if v.ndim==1:
-        nv=1
-    else:
-        nv = v.shape[1]
-    X, Ix = np.unique(x,return_inverse=True)
-    Y, Iy = np.unique(y,return_inverse=True)
-    if X.size * Y.size == x.size:
-        V = np.ndarray((nv,Y.size,X.size))
-        for k in range(nv):
-            for i in range(x.size):
-                V[k,Iy[i],Ix[i]] = v[i,k]
-        V = V.squeeze()
-        return True, X, Y, V, Ix, Iy
-    else:
-        return False, x, y, v, None, None
-
-# ================================================================================================
 
 # String identifying the semi-variance estimator to be used. Defaults to the Matheron estimator. Possible values are:
 estimator_list = {
@@ -362,10 +334,11 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
     label_v = labels[2]
     N = v.size
 
+    #Fig_Trend = plt.figure()
     Fig_Trend = plt.figure(layout='constrained')
     dpi = Fig_Trend.get_dpi()
     new_size = (width / dpi, height / dpi)
-    Fig_Trend.set_size_inches(new_size)
+    Fig_Trend.set_size_inches((width/dpi, height/dpi))
 
     if ntrend > 0:
         axs = Fig_Trend.subplots(1,3)
@@ -385,7 +358,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
     cp = ax.tricontourf(x, y, v, cmap = colormap)
     ax.set_xlabel(label_x)
     ax.set_ylabel(label_y)
-    cbar = Fig_Trend.colorbar(cp, ax=ax, shrink=1.0, aspect=10)
+    cbar = Fig_Trend.colorbar(cp, ax=ax, fraction=0.046, pad=0.04)
 
 
     if ntrend > 0:
@@ -407,7 +380,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
         cp = ax.tricontourf(x, y, tr, cmap = colormap)
         ax.set_xlabel(label_x)
         ax.set_ylabel(label_y)
-        cbar = Fig_Trend.colorbar(cp, ax=ax, shrink=1.0, aspect=10)
+        cbar = Fig_Trend.colorbar(cp, ax=ax, fraction=0.046, pad=0.04)
 
         v_tr = v - tr
         ax = axs[2]
@@ -416,7 +389,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
         cp = ax.tricontourf(x, y, v_tr, cmap = colormap)
         ax.set_xlabel(label_x)
         ax.set_ylabel(label_y)
-        cbar = Fig_Trend.colorbar(cp, ax=ax, shrink=1.0, aspect=10)
+        cbar = Fig_Trend.colorbar(cp, ax=ax, fraction=0.046, pad=0.04)
 
 
     results["Trend"] = Fig_Trend
@@ -980,8 +953,8 @@ def main():
     model0.anis = 2.0
     model0.var = 2.0
     print(model0)
-    #mesh_type = "unstructured"
-    mesh_type = "structured"
+    mesh_type = "unstructured"
+    #mesh_type = "structured"
     if mesh_type == "structured":
         x = np.array(range(101))
         y = np.array(range(51))
@@ -1044,10 +1017,12 @@ def main():
 
 
     sample = ot.Sample(np.vstack((X.flatten().T,Y.flatten().T,field_tr.flatten().T)).T)
+
     sample.setDescription(['X','Y','F'])
     units = {'X':'m','Y':'m','F':'val'}
-##    x, y, vals, results = Trend_Analyses_2D(sample, units, 400,1200,
-##        ntrend=2, removetrend=False, colormap="jet")
+    sample.exportToCSVFile('test_2d_ustr.csv',',')
+    #x, y, vals, results = Trend_Analyses_2D(sample, units, 400,1200,
+    #    ntrend=2, removetrend=False, colormap="jet")
     mdist = 30
     nb = 20
     res = make_variogram_2D(sample,units,1000,700,Nb = nb, Na = 36, max_dist = mdist, bandwidth = 8, return_counts = True)
