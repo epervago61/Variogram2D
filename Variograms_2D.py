@@ -121,7 +121,10 @@ def check_mesh_is_structured(coord, v):
     x = np.array(coord[:,0])
     y = np.array(coord[:,1])
     v = np.array(v)
-    nv = v.shape[1]
+    if v.ndim==1:
+        nv=1
+    else:
+        nv = v.shape[1]
     X, Ix = np.unique(x,return_inverse=True)
     Y, Iy = np.unique(y,return_inverse=True)
     if X.size * Y.size == x.size:
