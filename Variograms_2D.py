@@ -363,7 +363,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
     N = v.size
 
     if ntrend > 0:
-        Fig_Trend, axs = plt.subplots(3,1)
+        Fig_Trend, axs = plt.subplots(1,3)
     else:
         Fig_Trend, axs = plt.subplots()
     dpi = Fig_Trend.get_dpi()
