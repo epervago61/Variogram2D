@@ -664,7 +664,7 @@ def fit_variogram_2D(
     Fig_Empiric = plt.figure(layout='constrained')
     dpi = Fig_Empiric.get_dpi()
     new_size = (width / dpi, height / dpi)
-    Fig_Empiric.set_size_inches((width/dpi, height/dpi))
+    Fig_Empiric.set_size_inches(new_size)
     print(Fig_Empiric.get_size_inches())                
 
     if return_counts:
@@ -686,6 +686,9 @@ def fit_variogram_2D(
         p2 = ax.contourf(azimuts, bin_center, counts.T, 20, cmap = 'jet')
         cbar = Fig_Empiric.colorbar(p2,fraction=0.1, pad=0.04, aspect=10)
         ax.set_title("Counts")
+
+    Fig_Empiric.set_size_inches(new_size)
+
     results["VariogramEmp"] = Fig_Empiric
     return results
 
