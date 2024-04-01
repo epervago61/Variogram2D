@@ -111,6 +111,14 @@ from Bivariate_analyses import check_mesh_is_structured
 from ScatterD import plot_scatter_with_distrib
 from time import perf_counter
 
+# ================================================================================================
+def get_label(var_name, units, suff=""):
+    label = var_name + suff
+    if var_name in units:
+        label += " [" + units.get(var_name,'') + "]"
+    return label
+# ================================================================================================
+
 # String identifying the semi-variance estimator to be used. Defaults to the Matheron estimator. Possible values are:
 estimator_list = {
     "matheron": "Matheron",  # default
