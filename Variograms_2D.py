@@ -665,6 +665,7 @@ def fit_variogram_2D(
     dpi = Fig_Empiric.get_dpi()
     new_size = (width / dpi, height / dpi)
     Fig_Empiric.set_size_inches((width/dpi, height/dpi))
+    print(Fig_Empiric.get_size_inches())                
 
     if return_counts:
         axs = Fig_Empiric.subplots(1,2,subplot_kw=dict(projection='polar'))
@@ -672,7 +673,7 @@ def fit_variogram_2D(
     else:
         ax = Fig_Empiric.subplots(1,1,subplot_kw=dict(projection='polar'))
 
-
+    print(Fig_Empiric.get_size_inches())
     p1 = ax.contourf(azimuts, bin_center, dir_vario.T, 20, cmap = 'jet')
     ax.set_title("Empiric variogram")
     cbar = Fig_Empiric.colorbar(p1,fraction=0.1, pad=0.04, aspect=10)
