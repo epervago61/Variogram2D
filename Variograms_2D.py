@@ -106,7 +106,7 @@ import random
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tabulate import tabulate
 import progress.bar as pb
-from ScatterD import plot_scatter_with_distrib
+from Variogram2D.ScatterD import plot_scatter_with_distrib
 from time import perf_counter
 
 # ================================================================================================
