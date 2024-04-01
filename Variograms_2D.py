@@ -106,8 +106,8 @@ import random
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tabulate import tabulate
 import progress.bar as pb
-from Bivariate_analyses import get_label
-from Bivariate_analyses import check_mesh_is_structured
+from Variogram2D.Bivariate_analyses import get_label
+from Variogram2D.Bivariate_analyses import check_mesh_is_structured
 from ScatterD import plot_scatter_with_distrib
 from time import perf_counter
 
