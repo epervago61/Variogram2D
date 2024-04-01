@@ -362,13 +362,15 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
     label_v = labels[2]
     N = v.size
 
-    if ntrend > 0:
-        Fig_Trend, axs = plt.subplots(1,3)
-    else:
-        Fig_Trend, axs = plt.subplots()
+    Fig_Trend = plt.figure(layout='constrained')
     dpi = Fig_Trend.get_dpi()
     new_size = (width / dpi, height / dpi)
     Fig_Trend.set_size_inches(new_size)
+
+    if ntrend > 0:
+        axs = Fig_Trend.subplots(1,3)
+    else:
+        axs = Fig_Trend.subplots()
 
     if ntrend > 0:
         ax = axs[0]
@@ -383,7 +385,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
     cp = ax.tricontourf(x, y, v, cmap = colormap)
     ax.set_xlabel(label_x)
     ax.set_ylabel(label_y)
-    cbar = Fig_Trend.colorbar(cp)
+    cbar = Fig_Trend.colorbar(cp, ax=ax, shrink=1.0, aspect=10)
 
 
     if ntrend > 0:
@@ -405,7 +407,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
         cp = ax.tricontourf(x, y, tr, cmap = colormap)
         ax.set_xlabel(label_x)
         ax.set_ylabel(label_y)
-        cbar = Fig_Trend.colorbar(cp)
+        cbar = Fig_Trend.colorbar(cp, ax=ax, shrink=1.0, aspect=10)
 
         v_tr = v - tr
         ax = axs[2]
@@ -414,7 +416,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
         cp = ax.tricontourf(x, y, v_tr, cmap = colormap)
         ax.set_xlabel(label_x)
         ax.set_ylabel(label_y)
-        cbar = Fig_Trend.colorbar(cp)
+        cbar = Fig_Trend.colorbar(cp, ax=ax, shrink=1.0, aspect=10)
 
 
     results["Trend"] = Fig_Trend
