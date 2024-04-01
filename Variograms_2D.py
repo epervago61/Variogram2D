@@ -106,8 +106,6 @@ import random
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tabulate import tabulate
 import progress.bar as pb
-from Variogram2D.Bivariate_analyses import get_label
-from Variogram2D.Bivariate_analyses import check_mesh_is_structured
 from ScatterD import plot_scatter_with_distrib
 from time import perf_counter
 
@@ -149,6 +147,31 @@ class var_data:
         self.Counts = []
         self.MeshType = ''
         self.VarNames = []
+
+# ================================================================================================
+def get_label(var_name, units, suff=""):
+    label = var_name + suff
+    if var_name in units:
+        label += " [" + units.get(var_name,'') + "]"
+    return label
+# ================================================================================================
+def check_mesh_is_structured(coord, v):
+    x = np.array(coord[:,0])
+    y = np.array(coord[:,1])
+    v = np.array(v)
+    nv = v.shape[1]
+    X, Ix = np.unique(x,return_inverse=True)
+    Y, Iy = np.unique(y,return_inverse=True)
+    if X.size * Y.size == x.size:
+        V = np.ndarray((nv,Y.size,X.size))
+        for k in range(nv):
+            for i in range(x.size):
+                V[k,Iy[i],Ix[i]] = v[i,k]
+        V = V.squeeze()
+        return True, X, Y, V, Ix, Iy
+    else:
+        return False, x, y, v, None, None
+
 
 def get_model(model_name):
     return getattr(sys.modules["gstools"], model_name)(dim=2)
@@ -664,8 +687,7 @@ def fit_variogram_2D(
     Fig_Empiric = plt.figure(layout='constrained')
     dpi = Fig_Empiric.get_dpi()
     new_size = (width / dpi, height / dpi)
-    Fig_Empiric.set_size_inches(new_size)
-    print(Fig_Empiric.get_size_inches())                
+    Fig_Empiric.set_size_inches((width/dpi, height/dpi))
 
     if return_counts:
         axs = Fig_Empiric.subplots(1,2,subplot_kw=dict(projection='polar'))
@@ -673,7 +695,7 @@ def fit_variogram_2D(
     else:
         ax = Fig_Empiric.subplots(1,1,subplot_kw=dict(projection='polar'))
 
-    print(Fig_Empiric.get_size_inches())
+
     p1 = ax.contourf(azimuts, bin_center, dir_vario.T, 20, cmap = 'jet')
     ax.set_title("Empiric variogram")
     cbar = Fig_Empiric.colorbar(p1,fraction=0.1, pad=0.04, aspect=10)
@@ -686,9 +708,7 @@ def fit_variogram_2D(
         p2 = ax.contourf(azimuts, bin_center, counts.T, 20, cmap = 'jet')
         cbar = Fig_Empiric.colorbar(p2,fraction=0.1, pad=0.04, aspect=10)
         ax.set_title("Counts")
-
-    Fig_Empiric.set_size_inches(new_size)
-
+    print(Fig_Empiric.get_size_inches())
     results["VariogramEmp"] = Fig_Empiric
     return results
 
