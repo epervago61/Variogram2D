@@ -159,7 +159,7 @@ def get_model_list():
 def get_model_par_names(model):
     return model.arg
 
-def 1(model_name):
+def get_model_par_list(model_name):
     return get_model(model_name).arg
 
 def set_model_param(model, name, value):
