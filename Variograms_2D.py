@@ -661,20 +661,21 @@ def fit_variogram_2D(
     data.VarNames = var_names
     results["data"] = data
 
+    Fig_Empiric = plt.figure(layout='constrained')
+    dpi = Fig_Empiric.get_dpi()
+    new_size = (width / dpi, height / dpi)
+    Fig_Empiric.set_size_inches((width/dpi, height/dpi))
+
     if return_counts:
-        fig, axs = plt.subplots(1,2,figsize=(5,5),subplot_kw=dict(projection='polar'))
+        axs = Fig_Empiric.subplots(1,2,subplot_kw=dict(projection='polar'))
         ax = axs[0]
     else:
-        fig, ax = plt.subplots(1,1,figsize=(5,5),subplot_kw=dict(projection='polar'))
-    fig.set_layout_engine("constrained")
-    dpi = fig.get_dpi()
-    new_size = (width / dpi, height / dpi)
-    fig.set_size_inches(new_size)
+        ax = Fig_Empiric.subplots(1,1,subplot_kw=dict(projection='polar'))
 
 
     p1 = ax.contourf(azimuts, bin_center, dir_vario.T, 20, cmap = 'jet')
     ax.set_title("Empiric variogram")
-    cbar = fig.colorbar(p1,fraction=0.1, pad=0.04, aspect=10)
+    cbar = Fig_Empiric.colorbar(p1,fraction=0.1, pad=0.04, aspect=10)
     #cbar = fig.colorbar(p1,shrink=.6, pad=.05, aspect=10)
 
     if return_counts:
@@ -682,9 +683,9 @@ def fit_variogram_2D(
         data.counts = counts
         ax = axs[1]
         p2 = ax.contourf(azimuts, bin_center, counts.T, 20, cmap = 'jet')
-        cbar = fig.colorbar(p2,fraction=0.1, pad=0.04, aspect=10)
+        cbar = Fig_Empiric.colorbar(p2,fraction=0.1, pad=0.04, aspect=10)
         ax.set_title("Counts")
-    results["VariogramEmp"] = fig
+    results["VariogramEmp"] = Fig_Empiric
     return results
 
 def fit_variogram_2D(
