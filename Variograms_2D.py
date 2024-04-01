@@ -106,8 +106,6 @@ import random
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 from tabulate import tabulate
 import progress.bar as pb
-from Bivariate_analyses import get_label
-from Bivariate_analyses import check_mesh_is_structured
 from ScatterD import plot_scatter_with_distrib
 from time import perf_counter
 
@@ -117,6 +115,25 @@ def get_label(var_name, units, suff=""):
     if var_name in units:
         label += " [" + units.get(var_name,'') + "]"
     return label
+# ================================================================================================
+# ================================================================================================
+def check_mesh_is_structured(coord, v):
+    x = np.array(coord[:,0])
+    y = np.array(coord[:,1])
+    v = np.array(v)
+    nv = v.shape[1]
+    X, Ix = np.unique(x,return_inverse=True)
+    Y, Iy = np.unique(y,return_inverse=True)
+    if X.size * Y.size == x.size:
+        V = np.ndarray((nv,Y.size,X.size))
+        for k in range(nv):
+            for i in range(x.size):
+                V[k,Iy[i],Ix[i]] = v[i,k]
+        V = V.squeeze()
+        return True, X, Y, V, Ix, Iy
+    else:
+        return False, x, y, v, None, None
+
 # ================================================================================================
 
 # String identifying the semi-variance estimator to be used. Defaults to the Matheron estimator. Possible values are:
