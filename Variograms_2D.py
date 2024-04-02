@@ -381,7 +381,9 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
     cp = ax.tricontourf(x, y, v, cmap = colormap)
     ax.set_xlabel(label_x)
     ax.set_ylabel(label_y)
-    cbar = Fig_Trend.colorbar(cp, ax=ax, fraction=0.046, pad=0.04)
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="5%", pad=0.05)
+    cbar = plt.colorbar(cp, ax=cax)
 
 
     if ntrend > 0:
