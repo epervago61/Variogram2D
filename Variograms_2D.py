@@ -154,7 +154,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1 import ImageGrid
 from tabulate import tabulate
 ##import progress.bar as pb
-from  Variogram2D.ScatterD import plot_scatter_with_distrib
+from ScatterD import plot_scatter_with_distrib
 from time import perf_counter
 
 # String identifying the semi-variance estimator to be used. Defaults to the Matheron estimator. Possible values are:
@@ -402,13 +402,31 @@ def Trend_Analyses_2D(sample, units, width,height,
 
     results["Trend"] = Fig_Trend
 
-    results["MeshType"] = "unstructured"
-    if removetrend and ntrend > 0:
-        vals = V_Tr
+    if is_str:
+        results["MeshType"] = "structured"
     else:
-        vals = V
+        results["MeshType"] = "unstructured"
 
-    return x, y, vals, results
+    if removetrend and ntrend > 0:
+        results["Vals"] = V_Tr
+    else:
+        results["Vals"] = V
+
+    results["X"] = X
+    results["Y"] = Y
+    if is_str:
+        results["x"] = x
+        results["y"] = y
+        if removetrend and ntrend > 0:
+            results["vals"] = v_tr
+        else:
+            results["vals"] = v
+    else:
+        results["x"] = None
+        results["y"] = None
+        results["vals"] = None
+
+    return results
 
 def find_extr_azimuts(dir_v):
     N, Nb = dir_v.shape
@@ -489,18 +507,24 @@ def make_variogram_2D(sample, units, width, height, Nb = 20, Na = 36, angles_tol
     azimuts = np.deg2rad(Azimuts)
 
     var_names = tuple(sample.getDescription())
-    x, y, vals, results = Trend_Analyses_2D(sample, units, 1000,500,
+    res = Trend_Analyses_2D(sample, units, 1000,500,
         ntrend=2, removetrend=True, colormap="jet")
 
-    mesh_type = "unstructured"
+    results = {}
+    results["Trend"] = res["Trend"]
+    results["MeshType"] = res["MeshType"]
+    mesh_type = results["MeshType"]
+    X = res["X"]
+    Y = res["Y"]
+    Vals = res["Vals"]
 
 
     result = gs.vario_estimate(
-        *((x, y), vals.T),
+        *((X, Y), Vals.T),
         angles = azimuts[:Na//2],
         angles_tol = angles_tol,
         bandwidth = bandwidth,
-        mesh_type = mesh_type,
+        mesh_type = "unstructured",
         return_counts = return_counts,
         #bin_edges = bins,
         bin_no = Nb,
@@ -570,7 +594,7 @@ def make_variogram_2D(sample, units, width, height, Nb = 20, Na = 36, angles_tol
             ha="left",
             va="center",
         )  # horizontal alignment can be left, right or center
-    ax.axhline(vals.var(), ls="--", color="g", lw=2, label="Variance")
+    ax.axhline(Vals.var(), ls="--", color="g", lw=2, label="Variance")
     ax.set_xlabel("Distance [m]")
     ax.set_ylabel("Semivariance (%s)" % estimator_list[estimator])
     ax.grid(which="major")
@@ -581,9 +605,9 @@ def make_variogram_2D(sample, units, width, height, Nb = 20, Na = 36, angles_tol
     data.Azimuts = azimuts
     data.Bins = bin_center
     data.DirVario = dir_vario
-    data.X = x
-    data.Y = y
-    data.F = vals
+    data.X = X
+    data.Y = Y
+    data.F = Vals
     data.MeshType = mesh_type
     data.bandwidth = bandwidth
     data.angles_tol = angles_tol
@@ -767,7 +791,7 @@ def fit_variogram_2D(
         angles=[angle, angle + np.pi / 2],
         angles_tol=data.angles_tol,
         bandwidth=data.bandwidth,
-        mesh_type=mesh_type,
+        mesh_type="unstructured",
         return_counts=True,
         bin_no=data.Nb,
         max_dist=data.max_dist,
@@ -991,7 +1015,7 @@ def main():
 
     sample.setDescription(['X','Y','F'])
     units = {'X':'m','Y':'m','F':'val'}
-    #sample.exportToCSVFile('test_2d_str.csv',',')
+    sample.exportToCSVFile('test_2d_str.csv',',')
     #x, y, vals, results = Trend_Analyses_2D(sample, units, 2000,600,
     #    ntrend=2, removetrend=False, colormap="jet")
     mdist = 30
