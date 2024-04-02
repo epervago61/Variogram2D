@@ -154,7 +154,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 from mpl_toolkits.axes_grid1 import ImageGrid
 from tabulate import tabulate
 ##import progress.bar as pb
-from ScatterD import plot_scatter_with_distrib
+from  Variogram2D.ScatterD import plot_scatter_with_distrib
 from time import perf_counter
 
 # String identifying the semi-variance estimator to be used. Defaults to the Matheron estimator. Possible values are:
