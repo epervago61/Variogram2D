@@ -321,7 +321,7 @@ def Trend_Analyses_2D_structured(x,y,v, labels, width,height,
         ax.set_ylabel(label_y)
         cbar = Fig_Trend.colorbar(cp)
 
-
+    Fig_Trend.set_size_inches(new_size)
     results["Trend"] = Fig_Trend
 
     results["MeshType"] = "structured"
