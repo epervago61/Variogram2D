@@ -383,7 +383,7 @@ def Trend_Analyses_2D_unstructured(x,y,v, labels, width,height,
     ax.set_ylabel(label_y)
     divider = make_axes_locatable(ax)
     cax = divider.append_axes("right", size="5%", pad=0.05)
-    cbar = plt.colorbar(cp, ax=cax)
+    cbar = plt.colorbar(cp, cax=cax)
 
 
     if ntrend > 0:
